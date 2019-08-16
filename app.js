@@ -5,22 +5,22 @@
 
 // Initialize -----------------------------------------------------------------
 // Require packages
-var express         = require("express"),
-    bodyParser      = require("body-parser"),
-    mongoose        = require("mongoose"),
-    passport        = require("passport"),
-    LocalStrategy   = require("passport-local"),
-    methodOverride  = require("method-override"),
-    session         = require("express-session"),
-    flash           = require("connect-flash");
-    
-// Require DB Models    
-var User            = require("./models/user");
+var express = require("express"),
+  bodyParser = require("body-parser"),
+  mongoose = require("mongoose"),
+  passport = require("passport"),
+  LocalStrategy = require("passport-local"),
+  methodOverride = require("method-override"),
+  session = require("express-session"),
+  flash = require("connect-flash");
+
+// Require DB Models
+var User = require("./models/user");
 
 // Require Express Routers
-var indexRoutes         = require("./routes/index"),
-    campgroundRoutes    = require("./routes/campgrounds"),
-    commentRoutes       = require("./routes/comments");
+var indexRoutes = require("./routes/index"),
+  campgroundRoutes = require("./routes/campgrounds"),
+  commentRoutes = require("./routes/comments");
 
 // Connect Database
 mongoose.connect(process.env.DATABASEURL || "mongodb://localhost/yelp_camp");
@@ -29,16 +29,18 @@ mongoose.connect(process.env.DATABASEURL || "mongodb://localhost/yelp_camp");
 var app = express();
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(flash());
 
 //Express Session initilization for passport
-app.use(session({
+app.use(
+  session({
     secret: "This is a secret for YelpCamp...easily hackable",
     resave: false,
     saveUninitialized: false
-}));
+  })
+);
 
 // Passport configuration
 app.use(passport.initialize());
@@ -48,11 +50,11 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // Pass global middleware
-app.use(function(req, res, next){
-    res.locals.currentUser = req.user;
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
-    next();
+app.use(function(req, res, next) {
+  res.locals.currentUser = req.user;
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
 });
 
 // Use routes -----------------------------------------------------------------
@@ -65,6 +67,6 @@ app.use("/campgrounds/:id/comments", commentRoutes);
 // seedDb();
 
 // Listen ---------------------------------------------------------------------
-app.listen(process.env.PORT, process.env.IP, function(){
-    console.log("Server running.  Better go catch it!");
+app.listen(process.env.PORT, process.env.IP, function() {
+  console.log("Server running.  Better go catch it!");
 });
